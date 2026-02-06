@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, googleProvider, db } from './firebase';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import { collection, query, where, onSnapshot, addDoc, updateDoc, doc, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import './App.css';
 import AddRecipe from './components/AddRecipe';
 import SeeAllRecipes from './components/SeeAllRecipes';
