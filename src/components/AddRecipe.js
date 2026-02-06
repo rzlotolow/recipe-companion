@@ -7,8 +7,6 @@ function AddRecipe({ user, ingredients, units, editingRecipe, onCancelEdit }) {
  const [recipeName, setRecipeName] = useState('');
  const [recipeIngredients, setRecipeIngredients] = useState([]);
  const [notes, setNotes] = useState('');
- const [showAddIngredient, setShowAddIngredient] = useState(false);
- const [newIngredientName, setNewIngredientName] = useState('');
 
  useEffect(() => {
    if (editingRecipe) {
@@ -23,12 +21,28 @@ function AddRecipe({ user, ingredients, units, editingRecipe, onCancelEdit }) {
  }, [editingRecipe]);
 
  const addIngredientRow = () => {
-   setRecipeIngredients([...recipeIngredients, { ingredient: '', qty: '', unit: '', deleted: false }]);
+   setRecipeIngredients([...recipeIngredients, { ingredient: '', qty: '', unit: '', deleted: false, isNew: false, newIngredientName: '' }]);
  };
 
  const updateIngredientRow = (index, field, value) => {
    const updated = [...recipeIngredients];
-   updated[index][field] = value;
+   
+   if (field === 'ingredient') {
+     if (value === '__ADD_NEW__') {
+       updated[index].isNew = true;
+       updated[index].ingredient = '';
+       updated[index].newIngredientName = '';
+     } else {
+       updated[index].isNew = false;
+       updated[index].ingredient = value;
+     }
+   } else if (field === 'newIngredientName') {
+     updated[index].newIngredientName = value;
+     updated[index].ingredient = value;
+   } else {
+     updated[index][field] = value;
+   }
+   
    setRecipeIngredients(updated);
  };
 
@@ -36,22 +50,6 @@ function AddRecipe({ user, ingredients, units, editingRecipe, onCancelEdit }) {
    const updated = [...recipeIngredients];
    updated[index].deleted = true;
    setRecipeIngredients(updated);
- };
-
- const handleAddNewIngredient = async () => {
-   if (!newIngredientName.trim()) return;
-   try {
-     await addDoc(collection(db, 'ingredients'), {
-       name: newIngredientName.trim(),
-       userId: user.uid,
-       deleted: false,
-       createdAt: new Date()
-     });
-     setNewIngredientName('');
-     setShowAddIngredient(false);
-   } catch (error) {
-     console.error('Error adding ingredient:', error);
-   }
  };
 
  const handleSaveRecipe = async () => {
@@ -67,9 +65,28 @@ function AddRecipe({ user, ingredients, units, editingRecipe, onCancelEdit }) {
    }
 
    try {
+     const newIngredients = activeIngredients.filter(ing => ing.isNew && ing.newIngredientName.trim());
+     
+     for (const ing of newIngredients) {
+       const existingIngredient = ingredients.find(i => i.name.toLowerCase() === ing.newIngredientName.trim().toLowerCase());
+       if (!existingIngredient) {
+         await addDoc(collection(db, 'ingredients'), {
+           name: ing.newIngredientName.trim(),
+           userId: user.uid,
+           deleted: false,
+           createdAt: new Date()
+         });
+       }
+     }
+
      const recipeData = {
        name: recipeName.trim(),
-       ingredients: recipeIngredients,
+       ingredients: activeIngredients.map(ing => ({
+         ingredient: ing.ingredient.trim(),
+         qty: ing.qty,
+         unit: ing.unit,
+         deleted: false
+       })),
        notes: notes.trim(),
        userId: user.uid,
        deleted: false,
@@ -102,6 +119,8 @@ function AddRecipe({ user, ingredients, units, editingRecipe, onCancelEdit }) {
    onCancelEdit();
  };
 
+ const sortedIngredients = [...ingredients].sort((a, b) => a.name.localeCompare(b.name));
+
  return (
    <div className="add-recipe">
      <h2>{editingRecipe ? 'Edit Recipe' : 'Add New Recipe'}</h2>
@@ -125,17 +144,27 @@ function AddRecipe({ user, ingredients, units, editingRecipe, onCancelEdit }) {
        {recipeIngredients.map((ing, index) => (
          !ing.deleted && (
            <div key={index} className="ingredient-row">
-             <select
-               value={ing.ingredient}
-               onChange={(e) => updateIngredientRow(index, 'ingredient', e.target.value)}
-             >
-               <option value="">Select ingredient</option>
-               {ingredients.map(ingredient => (
-                 <option key={ingredient.id} value={ingredient.name}>
-                   {ingredient.name}
-                 </option>
-               ))}
-             </select>
+             {!ing.isNew ? (
+               <select
+                 value={ing.ingredient}
+                 onChange={(e) => updateIngredientRow(index, 'ingredient', e.target.value)}
+               >
+                 <option value="">Select ingredient</option>
+                 {sortedIngredients.map(ingredient => (
+                   <option key={ingredient.id} value={ingredient.name}>
+                     {ingredient.name}
+                   </option>
+                 ))}
+                 <option value="__ADD_NEW__">+ Add New Ingredient</option>
+               </select>
+             ) : (
+               <input
+                 type="text"
+                 value={ing.newIngredientName}
+                 onChange={(e) => updateIngredientRow(index, 'newIngredientName', e.target.value)}
+                 placeholder="Enter new ingredient name"
+               />
+             )}
 
              <input
                type="number"
@@ -163,25 +192,6 @@ function AddRecipe({ user, ingredients, units, editingRecipe, onCancelEdit }) {
            </div>
          )
        ))}
-
-       {!showAddIngredient ? (
-         <button onClick={() => setShowAddIngredient(true)} className="new-ingredient-btn">
-           + Add New Ingredient to Master List
-         </button>
-       ) : (
-         <div className="new-ingredient-form">
-           <input
-             type="text"
-             value={newIngredientName}
-             onChange={(e) => setNewIngredientName(e.target.value)}
-             placeholder="New ingredient name"
-           />
-           <button onClick={handleAddNewIngredient} className="save-btn">Save</button>
-           <button onClick={() => { setShowAddIngredient(false); setNewIngredientName(''); }} className="cancel-btn">
-             Cancel
-           </button>
-         </div>
-       )}
      </div>
 
      <div className="form-group">
