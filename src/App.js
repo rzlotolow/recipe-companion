@@ -45,11 +45,11 @@ function App() {
      setIngredients(ingredientsData);
    });
 
-   const unsubUnits = onSnapshot(collection(db, 'units'), (snapshot) => {
-     const unitsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-     setUnits(unitsData);
-   });
-
+const unsubUnits = onSnapshot(collection(db, 'units'), (snapshot) => {
+ const unitsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+ unitsData.sort((a, b) => a.name.localeCompare(b.name));
+ setUnits(unitsData);
+});
    return () => {
      unsubRecipes();
      unsubIngredients();
