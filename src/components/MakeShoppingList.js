@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { db } from '../firebase';
-import { updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { doc, writeBatch } from 'firebase/firestore';
 import './MakeShoppingList.css';
 
 function MakeShoppingList({ recipes }) {
