@@ -1,0 +1,143 @@
+.make-shopping-list {
+ background: white;
+ padding: 2rem;
+ border-radius: 0.5rem;
+ box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.make-shopping-list h2 {
+ margin-bottom: 1.5rem;
+ color: #333;
+}
+
+.search-box {
+ position: relative;
+ margin-bottom: 1.5rem;
+}
+
+.search-box input {
+ width: 100%;
+ padding: 0.75rem;
+ padding-right: 3rem;
+ border: 1px solid #ddd;
+ border-radius: 0.25rem;
+ font-size: 1rem;
+}
+
+.clear-search {
+ position: absolute;
+ right: 0.5rem;
+ top: 50%;
+ transform: translateY(-50%);
+ background: #999;
+ color: white;
+ border: none;
+ width: 2rem;
+ height: 2rem;
+ border-radius: 50%;
+ cursor: pointer;
+ font-size: 1rem;
+}
+
+.no-results {
+ text-align: center;
+ color: #999;
+ padding: 2rem;
+}
+
+.recipes-selection {
+ margin-bottom: 1.5rem;
+ max-height: 400px;
+ overflow-y: auto;
+ border: 1px solid #e0e0e0;
+ border-radius: 0.25rem;
+ padding: 1rem;
+}
+
+.recipe-checkbox {
+ padding: 0.75rem;
+ border-bottom: 1px solid #f0f0f0;
+}
+
+.recipe-checkbox:last-child {
+ border-bottom: none;
+}
+
+.recipe-checkbox label {
+ display: flex;
+ align-items: center;
+ cursor: pointer;
+ font-size: 1rem;
+}
+
+.recipe-checkbox input[type="checkbox"] {
+ width: 1.25rem;
+ height: 1.25rem;
+ margin-right: 0.75rem;
+ cursor: pointer;
+}
+
+.generate-btn {
+ background: #4CAF50;
+ color: white;
+ border: none;
+ padding: 1rem 2rem;
+ border-radius: 0.25rem;
+ cursor: pointer;
+ font-size: 1rem;
+ font-weight: 600;
+ width: 100%;
+}
+
+.shopping-list-result h3 {
+ color: #4CAF50;
+ margin-bottom: 1rem;
+ font-size: 1.5rem;
+}
+
+.shopping-items {
+ border: 1px solid #e0e0e0;
+ border-radius: 0.25rem;
+ margin-bottom: 1.5rem;
+ max-height: 500px;
+ overflow-y: auto;
+}
+
+.shopping-item {
+ display: flex;
+ justify-content: space-between;
+ padding: 1rem;
+ border-bottom: 1px solid #f0f0f0;
+}
+
+.shopping-item:last-child {
+ border-bottom: none;
+}
+
+.item-name {
+ font-weight: 600;
+ color: #333;
+}
+
+.item-qty {
+ color: #666;
+ font-family: monospace;
+}
+
+.new-list-btn {
+ background: #2196F3;
+ color: white;
+ border: none;
+ padding: 1rem 2rem;
+ border-radius: 0.25rem;
+ cursor: pointer;
+ font-size: 1rem;
+ width: 100%;
+}
+
+@media (max-width: 768px) {
+ .shopping-item {
+   flex-direction: column;
+   gap: 0.25rem;
+ }
+}
